@@ -1,0 +1,1 @@
+mvn generate-sources -Pmysql
