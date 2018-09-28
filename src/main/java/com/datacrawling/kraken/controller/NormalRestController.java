@@ -7,6 +7,7 @@ import com.datacrawling.kraken.model.InjectionData;
 import com.datacrawling.kraken.model.Vehicle;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ import static com.datacrawling.kraken.jooq.domain.tables.Reading.READING;
  * @since 1.1.0
  */
 @RestController
+@CrossOrigin
 public class NormalRestController {
 
 	@Autowired
