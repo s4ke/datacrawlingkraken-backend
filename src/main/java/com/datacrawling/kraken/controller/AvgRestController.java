@@ -72,6 +72,9 @@ public class AvgRestController {
 				.collect( Collectors.toList() );
 	}
 
+	/*
+	 * FIXME: BETTER: https://www.jooq.org/doc/3.11/manual/sql-execution/fetching/pojos/
+	 */
 	@GetMapping(value = "/avg/readings/injection/car")
 	public List<InjectionData> getAverageInjectionReadings(
 			@RequestParam("vehicleNumber") String vehicleNumber,
