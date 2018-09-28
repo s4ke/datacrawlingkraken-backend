@@ -60,7 +60,7 @@ public class AlertController {
 	) {
 		dsl.insertInto( ALERT, ALERT.VEHICLE_NUMBER, ALERT.ALERT_TYPE ).values( vehicleNumber, type ).execute();
 		//normally, this would be a post, but this allows debugging in the browser
-		return "";
+		return "OK";
 	}
 
 	@GetMapping("/alert/handle")
@@ -69,7 +69,7 @@ public class AlertController {
 				.set( ALERT.HANDLED, (byte) 1 )
 				.where( ALERT.ID.eq( id ) ).execute();
 		//normally, this would be a post, but this allows debugging in the browser
-		return "";
+		return "OK";
 	}
 
 }

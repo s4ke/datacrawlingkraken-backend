@@ -28,7 +28,7 @@ public class CarController {
 
 	@GetMapping("/car/all")
 	public List<Car> getAllCars() {
-		return dsl.select( CAR.ID, CAR.NAME )
+		return dsl.select( CAR.ID, CAR.NAME, CAR.DRIVING )
 				.from( CAR )
 				//hack, so that the actual cars are listed before the auxilliary cars generated
 				//by genCars
@@ -37,6 +37,7 @@ public class CarController {
 				.map( r -> Car.builder()
 						.id( r.get( CAR.ID ) )
 						.name( r.get( CAR.NAME ) )
+						.driving( r.get( CAR.DRIVING ) != null && r.get( CAR.DRIVING ).equals( (byte) 1 ) )
 						.build()
 				).collect( Collectors.toList() );
 	}
@@ -58,7 +59,55 @@ public class CarController {
 						.values( "Car-" + (curCount + i) ).execute();
 			}
 		} );
-		return "";
+		return "OK";
 	}
+
+	@GetMapping("/car/driving/start")
+	public String startDriving(@RequestParam("id") int id) {
+		dsl.update( CAR )
+				.set( CAR.DRIVING, (byte) 1 )
+				.where( CAR.ID.eq( id ) ).execute();
+		return "OK";
+	}
+
+	@GetMapping("/car/driving/startByName")
+	public String startDrivingByName(@RequestParam("name") String name) {
+		dsl.update( CAR )
+				.set( CAR.DRIVING, (byte) 1 )
+				.where( CAR.NAME.eq( name ) ).execute();
+		return "OK";
+	}
+
+	@GetMapping("/car/driving/stop")
+	public String stopDriving(@RequestParam("id") int id) {
+		dsl.update( CAR )
+				.set( CAR.DRIVING, (byte) 0 )
+				.where( CAR.ID.eq( id ) ).execute();
+		return "OK";
+	}
+
+	@GetMapping("/car/driving/stopByName")
+	public String stopDrivingByName(@RequestParam("name") String name) {
+		dsl.update( CAR )
+				.set( CAR.DRIVING, (byte) 0 )
+				.where( CAR.NAME.eq( name ) ).execute();
+		return "OK";
+	}
+
+	@GetMapping("/car/driving/running/count")
+	public Integer runningCount() {
+		return dsl.selectCount()
+				.from( CAR )
+				.where( CAR.DRIVING.eq( (byte) 1 ) ).fetchOne().get( 0, Integer.class );
+	}
+
+	@GetMapping("/car/driving/stopped/count")
+	public Integer stoppedCount() {
+		return dsl.selectCount()
+				.from( CAR )
+				.where( CAR.DRIVING.isNull().or( CAR.DRIVING.eq( (byte) 0 ) ) )
+				.fetchOne().get( 0, Integer.class );
+	}
+
 
 }
