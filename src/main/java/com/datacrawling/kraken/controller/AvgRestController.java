@@ -61,13 +61,81 @@ public class AvgRestController {
 
 	@GetMapping(value = "/avg/readings/injection/all")
 	public List<InjectionData> getAllAverageInjectionReadings() {
-		return dsl.select( READINGAVERAGE.ID )
+		return dsl.select( READINGAVERAGE.ID,
+						   READINGAVERAGE.VEHICLE_NUMBER,
+						   READINGAVERAGE.FUEL_PRESSURE,
+						   READINGAVERAGE.FUEL_TEMPERATURE_BEFORE_PUMP,
+						   READINGAVERAGE.FUEL_TEMPERATURE_AT_PUMP_OUTLET,
+						   READINGAVERAGE.FUEL_TEMPERATURE_IN_RAIL,
+						   READINGAVERAGE.VEHICLE_SPEED,
+						   READINGAVERAGE.ENGINE_SPEED,
+						   READINGAVERAGE.ENGINE_MAF,
+						   READINGAVERAGE.PEDAL_POSITION,
+						   READINGAVERAGE.AMBIANT_PRESSURE,
+						   READINGAVERAGE.AMBIANT_TEMPERATURE,
+						   READINGAVERAGE.DISTANCE_KM,
+						   READINGAVERAGE.INJECTION_NUMBER,
+						   READINGAVERAGE.INJECTOR_ADAPATION1,
+						   READINGAVERAGE.INJECTOR_ADAPATION2,
+						   READINGAVERAGE.INJECTOR_ADAPATION3,
+						   READINGAVERAGE.INJECTOR_ADAPATION4,
+						   READINGAVERAGE.INJECTOR_ADAPATION5,
+						   READINGAVERAGE.INJECTOR_ADAPATION6,
+						   READINGAVERAGE.INJECTOR_ADAPATION7,
+						   READINGAVERAGE.INJECTOR_ADAPATION8,
+						   READINGAVERAGE.INJECTOR_ADAPATION9,
+						   READINGAVERAGE.INJECTOR_ADAPATION10,
+						   READINGAVERAGE.INJECTOR_ADAPATION11,
+						   READINGAVERAGE.INJECTOR_ADAPATION12,
+						   READINGAVERAGE.INJECTOR_ADAPATION13,
+						   READINGAVERAGE.INJECTOR_ADAPATION14,
+						   READINGAVERAGE.INJECTOR_ADAPATION15,
+						   READINGAVERAGE.INJECTOR_ADAPATION16,
+						   READINGAVERAGE.INJECTOR_ADAPATION17,
+						   READINGAVERAGE.INJECTOR_ADAPATION18,
+						   READINGAVERAGE.INJECTOR_ADAPATION19,
+						   READINGAVERAGE.INJECTOR_ADAPATION20 )
 				.from( READINGAVERAGE )
 				.stream()
+				//FIXME: COPY PASTA
 				.map( r -> {
-					return InjectionData.builder()
-							.id( r.get( 0, Long.class ) )
-							.build();
+					InjectionData.InjectionDataBuilder builder = InjectionData.builder()
+							.id( r.get( READINGAVERAGE.ID ) )
+							.vehicleNumber( r.get( READINGAVERAGE.VEHICLE_NUMBER ) )
+							.fuelPressure( r.get( READINGAVERAGE.FUEL_PRESSURE ).floatValue() )
+							.fuelTemperatureBeforePump( r.get( READINGAVERAGE.FUEL_TEMPERATURE_BEFORE_PUMP )
+																.floatValue() )
+							.fuelTemperatureAtPumpOutlet( r.get( READINGAVERAGE.FUEL_TEMPERATURE_AT_PUMP_OUTLET )
+																  .floatValue() )
+							.fuelTemperatureInRail( r.get( READINGAVERAGE.FUEL_TEMPERATURE_IN_RAIL ).floatValue() )
+							.vehicleSpeed( r.get( READINGAVERAGE.VEHICLE_SPEED ).floatValue() )
+							.engineSpeed( r.get( READINGAVERAGE.ENGINE_SPEED ).floatValue() )
+							.engineMAF( r.get( READINGAVERAGE.ENGINE_MAF ).floatValue() )
+							.pedalPosition( r.get( READINGAVERAGE.PEDAL_POSITION ).floatValue() )
+							.ambientPressure( r.get( READINGAVERAGE.AMBIANT_PRESSURE ).floatValue() )
+							.ambientTemperature( r.get( READINGAVERAGE.AMBIANT_TEMPERATURE ).floatValue() )
+							.distanceKM( r.get( READINGAVERAGE.DISTANCE_KM ).floatValue() )
+							.injectionNumber( r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue() );
+
+					Integer injectionNumber = r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue();
+
+					int offset = 14;
+					int cycleCount = 4;
+					Map<Integer, List<Float>> injectorAdapter = new HashMap<>();
+
+					for ( int pulse = 0; pulse < injectionNumber; ++pulse ) {
+						List<Float> list = new ArrayList<>();
+						injectorAdapter.put( pulse, list );
+						for ( int cycle = 0; cycle < cycleCount; ++cycle ) {
+							list.add(
+									r.get(
+											offset + cycle * cycleCount + pulse,
+											Float.class
+									) );
+						}
+					}
+					builder.injectionAdaption( injectorAdapter );
+					return builder.build();
 				} )
 				.collect( Collectors.toList() );
 	}
