@@ -1,6 +1,9 @@
 package com.datacrawling.kraken.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.datacrawling.kraken.model.Car;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.datacrawling.kraken.jooq.domain.tables.Car.CAR;
+import static org.jooq.impl.DSL.count;
 
 
 /**
@@ -109,5 +113,23 @@ public class CarController {
 				.fetchOne().get( 0, Integer.class );
 	}
 
+	@GetMapping("/car/driving/overview/count")
+	public Map<String, Integer> getOverview() {
+		Map<String, Integer> ret = new HashMap<>();
+		ret.put("running", 0);
+		ret.put("stopped", 0);
+		dsl.select( CAR.DRIVING, count())
+				.from(CAR)
+				.groupBy( CAR.DRIVING )
+				.forEach( r2 -> {
+					Byte val = r2.get(0, Byte.class);
+					if(val != null && val.equals((byte) 1)) {
+						ret.put("running", ret.get( "running" ) + r2.get(1, Integer.class));
+					} else {
+						ret.put("stopped", ret.get( "stopped" ) + r2.get(1, Integer.class));
+					}
+				} );
+		return ret;
+	}
 
 }
