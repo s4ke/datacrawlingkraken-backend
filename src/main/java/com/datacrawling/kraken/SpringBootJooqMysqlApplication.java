@@ -9,4 +9,5 @@ public class SpringBootJooqMysqlApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootJooqMysqlApplication.class, args);
 	}
+
 }

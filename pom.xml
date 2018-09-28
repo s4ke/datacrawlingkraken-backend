@@ -26,6 +26,7 @@
 
         <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.2</org.projectlombok.version>
+        <jooq.version>3.9.1</jooq.version>
     </properties>
 
     <dependencies>
@@ -126,6 +127,7 @@
                     <plugin>
                         <groupId>org.jooq</groupId>
                         <artifactId>jooq-codegen-maven</artifactId>
+                        <version>${jooq.version}</version>
                         <executions>
                             <execution>
                                 <goals>
