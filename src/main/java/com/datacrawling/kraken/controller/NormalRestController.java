@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.datacrawling.kraken.jooq.domain.tables.Reading.READING;
-import static com.datacrawling.kraken.jooq.domain.tables.Readingaverage.READINGAVERAGE;
 
 /**
  * @author Martin Braun
@@ -26,18 +25,16 @@ public class NormalRestController {
 
 	@GetMapping(value = "/normal/vehicles/all/list")
 	public List<Vehicle> getAllVehicles() {
-		List<Vehicle> vehicles =
-				dsl.selectDistinct( READING.VEHICLE_NUMBER )
-						.from( READING )
-						.stream()
-						.map( r -> r.get( 0, String.class ) )
-						.map(
-								str ->
-										Vehicle.builder()
-												.vehicleName( str )
-												.build() )
-						.collect( Collectors.toList() );
-		return vehicles;
+		return dsl.selectDistinct( READING.VEHICLE_NUMBER )
+				.from( READING )
+				.stream()
+				.map( r -> r.get( 0, String.class ) )
+				.map(
+						str ->
+								Vehicle.builder()
+										.vehicleName( str )
+										.build() )
+				.collect( Collectors.toList() );
 	}
 
 	@GetMapping(value = "/normal/vehicles/all/count")
