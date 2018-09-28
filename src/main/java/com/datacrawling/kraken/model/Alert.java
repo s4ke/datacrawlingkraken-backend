@@ -19,4 +19,7 @@ public class Alert {
 
 	private boolean handled;
 
+	private Double lowerKM;
+	private Double upperKM;
+
 }

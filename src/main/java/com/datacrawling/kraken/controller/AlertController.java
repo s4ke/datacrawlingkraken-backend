@@ -37,7 +37,9 @@ public class AlertController {
 				ALERT.ID,
 				ALERT.VEHICLE_NUMBER,
 				ALERT.ALERT_TYPE,
-				ALERT.HANDLED
+				ALERT.HANDLED,
+				ALERT.LOWERKM,
+				ALERT.UPPERKM
 		)
 				.from( ALERT )
 				.where( condition )
@@ -49,6 +51,8 @@ public class AlertController {
 								.vehicleNumber( r.get( ALERT.VEHICLE_NUMBER ) )
 								.type( r.get( ALERT.ALERT_TYPE ) )
 								.handled( r.get( ALERT.HANDLED ) != null && r.get( ALERT.HANDLED ).equals( (byte) 1 ) )
+								.lowerKM( r.get( ALERT.LOWERKM ) )
+								.upperKM( r.get( ALERT.UPPERKM ) )
 								.build()
 				).collect( Collectors.toList() );
 	}
@@ -56,9 +60,23 @@ public class AlertController {
 	@GetMapping("/alert/new")
 	public String createAlert(
 			@RequestParam("vehicleNumber") String vehicleNumber,
-			@RequestParam("type") Integer type
+			@RequestParam("type") Integer type,
+			@RequestParam("lowerKM") Double lowerKM,
+			@RequestParam("upperKM") Double upperKM
 	) {
-		dsl.insertInto( ALERT, ALERT.VEHICLE_NUMBER, ALERT.ALERT_TYPE ).values( vehicleNumber, type ).execute();
+		dsl.insertInto(
+				ALERT,
+				ALERT.VEHICLE_NUMBER,
+				ALERT.ALERT_TYPE,
+				ALERT.LOWERKM,
+				ALERT.UPPERKM
+		)
+				.values(
+						vehicleNumber,
+						type,
+						lowerKM,
+						upperKM
+				).execute();
 		//normally, this would be a post, but this allows debugging in the browser
 		return "OK";
 	}
