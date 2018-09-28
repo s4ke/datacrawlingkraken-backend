@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.datacrawling.kraken.model.Vehicle;
 import org.jooq.DSLContext;
+import org.jooq.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,7 @@ public class AvgRestController {
 	@Autowired
 	private DSLContext dsl;
 
-	@GetMapping(value = "/avg/vehicles/all")
+	@GetMapping(value = "/avg/vehicles/all/list")
 	public List<Vehicle> getAllVehicles() {
 		List<Vehicle> vehicles =
 				dsl.selectDistinct( READINGAVERAGE.VEHICLE_NUMBER )
@@ -32,4 +33,13 @@ public class AvgRestController {
 						.collect( Collectors.toList() );
 		return vehicles;
 	}
+
+	@GetMapping(value="/avg/vehicles/all/count")
+	public Integer getVehicleCount() {
+		return dsl.select( READINGAVERAGE.VEHICLE_NUMBER.countDistinct() )
+				.from( READINGAVERAGE )
+				.fetchOne()
+				.get(0, Integer.class);
+	}
+
 }
