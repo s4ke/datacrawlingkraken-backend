@@ -8,7 +8,6 @@ import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +30,9 @@ public class CarController {
 	public List<Car> getAllCars() {
 		return dsl.select( CAR.ID, CAR.NAME )
 				.from( CAR )
-				.orderBy( CAR.NAME )
+				//hack, so that the actual cars are listed before the auxilliary cars generated
+				//by genCars
+				.orderBy( CAR.NAME.desc() )
 				.stream()
 				.map( r -> Car.builder()
 						.id( r.get( CAR.ID ) )
@@ -50,11 +51,13 @@ public class CarController {
 
 	@GetMapping("/car/create/some")
 	public String genCars(@RequestParam("count") int count) {
-		int curCount = getCarCount();
-		for(int i = 0; i < count; ++i) {
-			dsl.insertInto(CAR, CAR.NAME)
-					.values( "Car-" + (curCount + i) ).execute();
-		}
+		dsl.transaction( conf -> {
+			int curCount = getCarCount();
+			for ( int i = 0; i < count; ++i ) {
+				dsl.insertInto( CAR, CAR.NAME )
+						.values( "Car-" + (curCount + i) ).execute();
+			}
+		} );
 		return "";
 	}
 
