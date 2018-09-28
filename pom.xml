@@ -156,7 +156,7 @@
                                     <inputSchema>datacrawlingkraken</inputSchema>
                                 </database>
                                 <target>
-                                    <packageName>com.example.demo.jooq.domain</packageName>
+                                    <packageName>com.datacrawling.kraken.jooq.domain</packageName>
                                     <directory>gensrc/main/java</directory>
                                 </target>
                             </generator>
