@@ -74,6 +74,9 @@ public class AvgRestController {
 						   READINGAVERAGE.AMBIANT_PRESSURE,
 						   READINGAVERAGE.AMBIANT_TEMPERATURE,
 						   READINGAVERAGE.DISTANCE_KM,
+						   READINGAVERAGE.FUEL_PUMP_DELIVERY,
+						   READINGAVERAGE.FUEL_MASS_ADAPATION,
+						   READINGAVERAGE.GEAR_ENGAGED,
 						   READINGAVERAGE.INJECTION_NUMBER,
 						   READINGAVERAGE.INJECTOR_ADAPATION1,
 						   READINGAVERAGE.INJECTOR_ADAPATION2,
@@ -115,11 +118,14 @@ public class AvgRestController {
 							.ambientPressure( r.get( READINGAVERAGE.AMBIANT_PRESSURE ).floatValue() )
 							.ambientTemperature( r.get( READINGAVERAGE.AMBIANT_TEMPERATURE ).floatValue() )
 							.distanceKM( r.get( READINGAVERAGE.DISTANCE_KM ).floatValue() )
-							.injectionNumber( r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue() );
+							.injectionNumber( r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue() )
+							.pumpSpeed( r.get(READINGAVERAGE.FUEL_PUMP_DELIVERY).floatValue() )
+							.fuelMassDelivery( r.get(READINGAVERAGE.FUEL_MASS_ADAPATION).floatValue() )
+							.gearEngaged( r.get(READINGAVERAGE.GEAR_ENGAGED).floatValue() );
 
 					Integer injectionNumber = r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue();
 
-					int offset = 14;
+					int offset = 17;
 					int cycleCount = 4;
 					Map<Integer, List<Float>> injectorAdapter = new HashMap<>();
 
@@ -145,6 +151,8 @@ public class AvgRestController {
 	 */
 	@GetMapping(value = "/avg/readings/injection/car")
 	public List<InjectionData> getAverageInjectionReadings(
+			//FIXME: we ignore this for now, quick fix so that we always have data available
+			//in the presentation
 			@RequestParam("vehicleNumber") String vehicleNumber,
 			@RequestParam("lowerKM") Optional<Float> lowerKM,
 			@RequestParam("upperKM") Optional<Float> upperKM
@@ -164,6 +172,9 @@ public class AvgRestController {
 						READINGAVERAGE.AMBIANT_PRESSURE,
 						READINGAVERAGE.AMBIANT_TEMPERATURE,
 						READINGAVERAGE.DISTANCE_KM,
+						READINGAVERAGE.FUEL_PUMP_DELIVERY,
+						READINGAVERAGE.FUEL_MASS_ADAPATION,
+						READINGAVERAGE.GEAR_ENGAGED,
 						READINGAVERAGE.INJECTION_NUMBER,
 						READINGAVERAGE.INJECTOR_ADAPATION1,
 						READINGAVERAGE.INJECTOR_ADAPATION2,
@@ -217,11 +228,14 @@ public class AvgRestController {
 							.ambientPressure( r.get( READINGAVERAGE.AMBIANT_PRESSURE ).floatValue() )
 							.ambientTemperature( r.get( READINGAVERAGE.AMBIANT_TEMPERATURE ).floatValue() )
 							.distanceKM( r.get( READINGAVERAGE.DISTANCE_KM ).floatValue() )
-							.injectionNumber( r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue() );
+							.injectionNumber( r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue() )
+							.pumpSpeed( r.get(READINGAVERAGE.FUEL_PUMP_DELIVERY).floatValue() )
+							.fuelMassDelivery( r.get(READINGAVERAGE.FUEL_MASS_ADAPATION).floatValue() )
+							.gearEngaged( r.get(READINGAVERAGE.GEAR_ENGAGED).floatValue() );
 
 					Integer injectionNumber = r.get( READINGAVERAGE.INJECTION_NUMBER ).intValue();
 
-					int offset = 14;
+					int offset = 17;
 					int cycleCount = 4;
 					Map<Integer, List<Float>> injectorAdapter = new HashMap<>();
 

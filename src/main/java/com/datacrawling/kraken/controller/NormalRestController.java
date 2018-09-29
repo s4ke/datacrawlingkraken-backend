@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.datacrawling.kraken.jooq.domain.tables.Reading.READING;
+import static com.datacrawling.kraken.jooq.domain.tables.Readingaverage.READINGAVERAGE;
 
 /**
  * @author Martin Braun
@@ -79,6 +80,8 @@ public class NormalRestController {
 
 	@GetMapping(value = "/normal/readings/injection/live")
 	public InjectionData getLiveData(
+			//FIXME: we ignore this for now, quick fix so that we always have data available
+			//in the presentation
 			@RequestParam("vehicleNumber") String vehicleNumber,
 			@RequestParam("lastId") Long lastId) {
 		Instant now = Instant.now();
@@ -106,6 +109,9 @@ public class NormalRestController {
 				READING.AMBIANT_PRESSURE,
 				READING.AMBIANT_TEMPERATURE,
 				READING.DISTANCE_KM,
+				READING.FUEL_PUMP_DELIVERY,
+				READING.FUEL_MASS_ADAPATION,
+				READING.GEAR_ENGAGED,
 				READING.INJECTION_NUMBER,
 				READING.INJECTOR_ADAPATION1,
 				READING.INJECTOR_ADAPATION2,
@@ -129,8 +135,14 @@ public class NormalRestController {
 				READING.INJECTOR_ADAPATION20
 		)
 				.from( READING )
-				.where( READING.VEHICLE_NUMBER.eq( vehicleNumber )
-								.and( READING.ID.gt( lastId ) ) )
+				.where(
+						//FIXME: we ignore this for now, quick fix so that we always have data available
+						//in the presentation
+						//READING.VEHICLE_NUMBER.eq( vehicleNumber )
+						//		.and(
+										READING.ID.gt( lastId )
+						//		)
+		)
 				//FIXME: in reality we would want to sort desc()
 				//but as we want to have this as a "replay" feature, asc() is required
 				.orderBy( READING.ID.asc() )
@@ -157,11 +169,14 @@ public class NormalRestController {
 										.ambientPressure( r.get( READING.AMBIANT_PRESSURE ).floatValue() )
 										.ambientTemperature( r.get( READING.AMBIANT_TEMPERATURE ).floatValue() )
 										.distanceKM( r.get( READING.DISTANCE_KM ).floatValue() )
-										.injectionNumber( r.get( READING.INJECTION_NUMBER ).intValue() );
+										.injectionNumber( r.get( READING.INJECTION_NUMBER ).intValue() )
+										.pumpSpeed( r.get(READING.FUEL_PUMP_DELIVERY).floatValue() )
+										.fuelMassDelivery( r.get(READING.FUEL_MASS_ADAPATION).floatValue() )
+										.gearEngaged( r.get(READING.GEAR_ENGAGED).floatValue() );
 
 								Integer injectionNumber = r.get( READING.INJECTION_NUMBER ).intValue();
 
-								int offset = 14;
+								int offset = 17;
 								int cycleCount = 4;
 								Map<Integer, List<Float>> injectorAdapter = new HashMap<>();
 

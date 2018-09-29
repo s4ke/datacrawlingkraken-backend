@@ -3,6 +3,7 @@ package com.datacrawling.kraken.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -30,13 +31,17 @@ public class CarController {
 	@Autowired
 	private DSLContext dsl;
 
+	private static final int PAGE_SIZE = 10;
+
 	@GetMapping("/car/all")
-	public List<Car> getAllCars() {
+	public List<Car> getAllCars(@RequestParam Optional<Integer> page) {
 		return dsl.select( CAR.ID, CAR.NAME, CAR.DRIVING )
 				.from( CAR )
 				//hack, so that the actual cars are listed before the auxilliary cars generated
 				//by genCars
 				.orderBy( CAR.NAME.desc() )
+				.offset( page.map( integer -> integer * PAGE_SIZE ).orElse( 0 ) )
+				.limit( page.isPresent() ? PAGE_SIZE : Integer.MAX_VALUE )
 				.stream()
 				.map( r -> Car.builder()
 						.id( r.get( CAR.ID ) )

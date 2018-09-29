@@ -39,4 +39,8 @@ public class InjectionData {
 
 	private Float distanceKM;
 
+	private Float pumpSpeed;
+	private Float fuelMassDelivery;
+	private Float gearEngaged;
+
 }
